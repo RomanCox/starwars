@@ -1,0 +1,14 @@
+.MainPage {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
+
+.charsList {
+  height: 100%;
+  display: flex;
+  gap: 30px;
+}
+

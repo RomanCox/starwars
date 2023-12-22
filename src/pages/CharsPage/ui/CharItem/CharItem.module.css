@@ -1,0 +1,15 @@
+.CharItem {
+  width: 300px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+
+  &:hover {
+    transform: scale(1.01);
+    opacity: 0.8;
+  }
+}
