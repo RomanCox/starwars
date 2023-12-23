@@ -2,9 +2,9 @@ import {memo} from 'react';
 import {classNames} from '../../../../shared/lib/classNames/classNames.ts';
 import {Link} from 'react-router-dom';
 import {Avatar, Paper, Typography} from "@mui/material";
-import {Char} from '../../../../entities/Char';
 import {RoutePath} from '../../../../shared/config/routeConfig.tsx';
 import cls from './CharItem.module.css';
+import {Char} from "../../../CharPage";
 
 interface CharItemPropsType {
     className?: string;

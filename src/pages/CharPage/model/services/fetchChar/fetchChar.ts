@@ -1,6 +1,6 @@
 import {createAsyncThunk} from '@reduxjs/toolkit';
-import {Char} from '../../../../../entities/Char';
 import {ThunkConfig} from '../../../../../app/providers/StoreProvider/config/StateSchema.ts';
+import {Char} from "../../types/charPageSchema.ts";
 
 export const fetchChar = createAsyncThunk<
     Char,

@@ -1,4 +1,4 @@
-import {Char} from '../../../../entities/Char';
+import {Char} from "../../../CharPage";
 
 export interface CharsPageSchema {
     isLoading?: boolean;

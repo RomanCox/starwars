@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {CharsPageSchema} from '../../types/charsPageSchema.ts';
-import {Char} from '../../../../../entities/Char';
 import {fetchCharsList} from "../../services/fetchCharsList/fetchCharsList.ts";
+import {Char} from "../../../../CharPage";
 
 const initialState: CharsPageSchema = {
     isLoading: false,

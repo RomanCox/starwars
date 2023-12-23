@@ -1,6 +1,6 @@
 import {ChangeEvent, memo, useCallback, useEffect, useMemo} from 'react';
 import {useSelector} from 'react-redux';
-import {Pagination, Stack} from '@mui/material';
+import {Pagination, Stack, Typography} from '@mui/material';
 import {useSearchParams} from 'react-router-dom';
 import {useDebounce} from '../../../../shared/lib/hooks/useDebounce/useDebounce.ts';
 import {useAppDispatch} from '../../../../shared/lib/hooks/useAppDispatch/useAppDispatch.ts';
@@ -23,11 +23,9 @@ const CharsPage = memo(() => {
     const chars = useSelector(getChars);
     const numberOfChars = useSelector(getNumberOfChars);
     const isLoading = useSelector(getCharsIsLoading);
-    let [searchParams, setSearchParams] = useSearchParams();
+    let [_, setSearchParams] = useSearchParams();
     const page = useSelector(getPage);
     const search = useSelector(getSearch);
-    const pageParam = searchParams.get('page');
-    const searchParam = searchParams.get('search');
 
     const fetchChars = useCallback(() => {
         dispatch(fetchCharsList());
@@ -36,54 +34,39 @@ const CharsPage = memo(() => {
     const fetchSearchingData = useDebounce(fetchChars, 500);
 
     const count = useMemo(() => {
-        return Math.ceil(numberOfChars || 0 / 10)
+        return numberOfChars ? Math.ceil(numberOfChars / 10) : undefined;
     }, [numberOfChars]);
 
-    const onChangePage = (_event: ChangeEvent<unknown>, page: number) => {
-        let params: Record<string, string | string[]> = {};
-        if (searchParams.has('search')) {
-            params.search = searchParams.get('search') as string;
-        }
-        params.page = String(page);
-        setSearchParams(params);
+    const onChangePage = useCallback((_event: ChangeEvent<unknown>, page: number) => {
         dispatch(charsActions.setPage({page}));
         fetchChars();
-    };
+    }, [dispatch]);
 
     const onChangeSearch = useCallback((value: string) => {
-        let params: Record<string, string | string[]> = {page: '1'};
-        params.search = value;
-        if (value === '') {
-            searchParams.delete('search')
-        }
-        setSearchParams(params);
         dispatch(charsActions.setSearch({value}));
         fetchSearchingData();
-    }, [fetchSearchingData, setSearchParams])
+    }, [])
 
     useEffect(() => {
-        if (searchParams.has('page')) {
-            if (typeof Number(pageParam) === 'number') {
-                dispatch(charsActions.setPage({page: Number(pageParam)}));
-            }
-        }
-        if (searchParams.has('search')) {
-            dispatch(charsActions.setSearch({value: searchParam}));
-        }
-
-        fetchSearchingData();
-    }, [dispatch, searchParam])
+        fetchChars();
+    }, [fetchChars])
 
     useEffect(() => {
-        let params: Record<string, string | string[]> = {};
-        if (page) {
-            params.page = String(page);
-        }
+        let params: Record<string, string | string[]> = {page: String(page)};
         if (search) {
             params.search = search;
         }
         setSearchParams(params);
-    }, [])
+    }, [page]);
+
+    useEffect(() => {
+        let params: Record<string, string | string[]> = {page: '1'};
+        if (search !== '') {
+            params = {page: '1', search: search};
+        }
+        setSearchParams(params);
+        dispatch(charsActions.setPage({page: 1}));
+    }, [search]);
 
     return (
         <div className={cls.MainPage}>
@@ -96,15 +79,17 @@ const CharsPage = memo(() => {
                 useFlexGap
                 justifyContent="center"
             >
-                {isLoading || chars?.length === 0
+                {isLoading
                     ? <Loader/>
-                    : chars?.map(char => (
+                    : chars?.length === 0
+                        ? <Typography variant="h3" component="h3" >{'Cant find this chars'}</Typography>
+                        : chars?.map(char => (
                         <CharItem char={char} key={char.url}/>
                     ))
                 }
             </Stack>
             <Stack spacing={2}>
-                {!isLoading && chars?.length !== 0 && count > 1 && <Pagination
+                {!isLoading && chars?.length !== 0 && count && <Pagination
                     count={count}
                     color="primary"
                     onChange={onChangePage}
